@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="windows-1252" standalone="no"?>
+<log>
+<record>
+  <date>2017-11-17T17:16:17</date>
+  <logger>oracle.dbtools.migration.workbench.core.MigrationLogResourceBundle</logger>
+  <level>SEVERE</level>
+  <class>oracle.dbtools.migration.workbench.core.logging.MigrationLogUtil</class>
+  <message>Capture
+Enterprise Capture
+Capture failed.  Refer to MIGRLOG table in the repository for details</message>
+  <param>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask.doOnlineEnterpriseCapture(FullMigrateTask.java:765)</param>
+  <param>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask.doCapture(FullMigrateTask.java:608)</param>
+  <param>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask.doMaskBasedActions(FullMigrateTask.java:407)</param>
+  <param>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask.doWork(FullMigrateTask.java:321)</param>
+  <param>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask.doWork(FullMigrateTask.java:154)</param>
+  <param>oracle.dbtools.raptor.backgroundTask.RaptorTask.call(RaptorTask.java:193)</param>
+  <param>java.util.concurrent.FutureTask.run(FutureTask.java:266)</param>
+  <param>oracle.dbtools.raptor.backgroundTask.RaptorTaskManager$RaptorFutureTask.run(RaptorTaskManager.java:629)</param>
+  <param>java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)</param>
+  <param>java.util.concurrent.FutureTask.run(FutureTask.java:266)</param>
+  <param>java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)</param>
+  <param>java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)</param>
+  <param>java.lang.Thread.run(Thread.java:748)</param>
+  <param>oracle.dbtools.migration.workbench.core.logging.LogInfo@553bdcdd</param>
+  <exception>
+    <message>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask$FullMigrateTaskException: Capture
+Enterprise Capture
+Capture failed.  Refer to MIGRLOG table in the repository for details</message>
+    <frame>
+      <class>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask</class>
+      <line>765</line>
+    </frame>
+    <frame>
+      <class>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask</class>
+      <line>608</line>
+    </frame>
+    <frame>
+      <class>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask</class>
+      <line>407</line>
+    </frame>
+    <frame>
+      <class>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask</class>
+      <line>321</line>
+    </frame>
+    <frame>
+      <class>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask</class>
+      <line>154</line>
+    </frame>
+    <frame>
+      <class>oracle.dbtools.raptor.backgroundTask.RaptorTask</class>
+      <line>193</line>
+    </frame>
+    <frame>
+      <class>java.util.concurrent.FutureTask</class>
+      <line>266</line>
+    </frame>
+    <frame>
+      <class>oracle.dbtools.raptor.backgroundTask.RaptorTaskManager$RaptorFutureTask</class>
+      <line>629</line>
+    </frame>
+    <frame>
+      <class>java.util.concurrent.Executors$RunnableAdapter</class>
+      <line>511</line>
+    </frame>
+    <frame>
+      <class>java.util.concurrent.FutureTask</class>
+      <line>266</line>
+    </frame>
+    <frame>
+      <class>java.util.concurrent.ThreadPoolExecutor</class>
+      <line>1149</line>
+    </frame>
+    <frame>
+      <class>java.util.concurrent.ThreadPoolExecutor$Worker</class>
+      <line>624</line>
+    </frame>
+    <frame>
+      <class>java.lang.Thread</class>
+      <line>748</line>
+    </frame>
+  </exception>
+
+</record>
+<record>
+  <date>2017-11-17T17:16:17</date>
+  <logger>oracle.dbtools.migration.workbench.core.MigrationLogResourceBundle</logger>
+  <level>WARNING</level>
+  <class>oracle.dbtools.migration.workbench.core.ui.FullMigrateTask</class>
+  <message>Error:ORA-06550: line 1, column 14:
+PLS-00201: identifier 'SS2K5ALLPLATFORM.STAGECAPTURE' must be declared
+ORA-06550: line 1, column 7:
+PL/SQL: Statement ignored
+: FAILED : Migración de Base de Datos : FAILED</message>
+  <param>oracle.dbtools.migration.workbench.core.logging.LogInfo@21854c04</param>
+
+</record>
