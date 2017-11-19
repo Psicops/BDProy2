@@ -21,4 +21,10 @@ class Conexion {
         rs = st.executeQuery(query);
         return rs;
     }
+    
+    public static void setQuery(String query) throws SQLException{
+        cn = Conexion.getConexion();
+        st = cn.createStatement();
+        st.executeQuery(query);
+    }
 }

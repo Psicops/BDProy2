@@ -8,8 +8,11 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import javafx.util.Pair;
 import logic.partido.Partido;
+import logic.persona.Jugador;
 
 public class PDFPrinter{
     
@@ -18,7 +21,8 @@ public class PDFPrinter{
     
     public PDFPrinter(){}
     
-    public void crearReporteConfederaciones(ArrayList<Confederacion> confederaciones) throws DocumentException, FileNotFoundException{
+    public void crearReporteConfederaciones() throws DocumentException, FileNotFoundException, SQLException{
+        ArrayList<Confederacion> confederaciones = Logic.getInstance().getConfederaciones();
         Document doc = new Document();
         PdfWriter.getInstance(doc, new FileOutputStream("Reporte Confederaciones.pdf"));
         doc.open();
@@ -42,15 +46,21 @@ public class PDFPrinter{
         doc.close();
     }
     
-    public void crearReportePartidos(ArrayList<Partido> partidos){
+    public void crearReportePartidos(){
     }
     
-    public void crearReporteGrupos(String grupo){
+    public void crearReportePartido(Partido partido){
+    }
+    
+    public void crearReporteGrupos(){
+        
     }
     
     public void crearReportePosiciones(){
     }
     
-    public void crearReporteGoleadores(){
+    public void crearReporteGoleadores() throws SQLException{
+        Pair<ArrayList<Jugador>, ArrayList<Integer>> goledores = Logic.getInstance().getGoleadores();
+        
     }
 }

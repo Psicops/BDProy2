@@ -1,8 +1,11 @@
 package ui;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import javafx.util.Pair;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import logic.Confederacion;
 import logic.Equipo;
@@ -15,7 +18,19 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() {
         initComponents();
         this.setTitle("Base de Datos: Copa del Mundo");
-        //this.update();
+        this.setLocationRelativeTo(null);
+        tableGrupoA.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableGrupoB.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableGrupoC.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableGrupoD.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableGrupoE.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableGrupoF.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableGrupoG.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableGrupoH.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableEquipos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableGoleadores.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablePartidos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablePosiciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
     
     private void clearTable(JTable table){
@@ -41,8 +56,8 @@ public class MainWindow extends javax.swing.JFrame {
     private void updateTablaGrupo(String idGrupo, JTable tabla) throws SQLException{
         clearTable(tabla);
         DefaultTableModel model = (DefaultTableModel)tabla.getModel();
-        Object[] fila = new String[10];
-        int posicion = 1;
+        Object[] fila = new Object[10];
+        Integer posicion = 1;
         for(Equipo equipo : Logic.getInstance().getGrupo(idGrupo)){
             fila[0] = posicion;
             fila[1] = equipo.getNombrePais();
@@ -55,7 +70,6 @@ public class MainWindow extends javax.swing.JFrame {
             fila[8] = equipo.getGolesContra();
             fila[9] = equipo.getGolesDiferencia();
             model.addRow(fila);
-            
             posicion++;
         }
     }
@@ -101,11 +115,12 @@ public class MainWindow extends javax.swing.JFrame {
     public void updateGoleadores() throws SQLException{
         clearTable(tableGoleadores);
         DefaultTableModel model = (DefaultTableModel)tablePosiciones.getModel();
-        Object[] fila = new String[2];
-        HashMap<Jugador, Integer> goleadores = Logic.getInstance().getGoleadores();
-        for(Jugador jugador : goleadores.keySet()){
-            fila[0] = jugador.getNombre();
-            fila[1] = goleadores.get(jugador);
+        Object[] fila = new Object[2];
+        Pair<ArrayList<Jugador>, ArrayList<Integer>> goleadores = Logic.getInstance().getGoleadores();
+        int i = 0;
+        for(Jugador jugador : goleadores.getKey()){
+            fila[0] = jugador;
+            fila[1] = goleadores.getValue().get(i++);
             model.addRow(fila);
         }
     }
@@ -125,11 +140,11 @@ public class MainWindow extends javax.swing.JFrame {
     
     public void update(){
         try {
-            updatePartidos();
+            //updatePartidos();
             updateTablasGrupos();
-            updatePosiciones();
-            updateGoleadores();
-            updateEquipos();
+            //updatePosiciones();
+            //updateGoleadores();
+            //updateEquipos();
         } catch (SQLException ex) {
             UI.getInstance().displayError("Al cargar información de la base de datos:\n"+ex.getMessage(), this);
         }
@@ -207,6 +222,11 @@ public class MainWindow extends javax.swing.JFrame {
         popupMenuGrupos.add(menuItemGruposReporte);
 
         popupMenuPosicionesReporte.setText("Crear Reporte");
+        popupMenuPosicionesReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                popupMenuPosicionesReporteActionPerformed(evt);
+            }
+        });
         popupMenuPosiciones.add(popupMenuPosicionesReporte);
 
         menuItemPartidosCrear.setText("Crear Partido");
@@ -220,13 +240,28 @@ public class MainWindow extends javax.swing.JFrame {
         popupMenuPartidos.add(menuItemPartidosModificar);
 
         menuItemPartidosReporte.setText("Crear Reporte del Partido Seleccionado");
+        menuItemPartidosReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemPartidosReporteActionPerformed(evt);
+            }
+        });
         popupMenuPartidos.add(menuItemPartidosReporte);
 
         menuItemPartidosReporteTodos.setText("Crear Reporte de TODOS los Partidos");
+        menuItemPartidosReporteTodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemPartidosReporteTodosActionPerformed(evt);
+            }
+        });
         popupMenuPartidos.add(menuItemPartidosReporteTodos);
 
         menuItemGoleadoresReporte.setText("Crear Reporte");
         menuItemGoleadoresReporte.setActionCommand("");
+        menuItemGoleadoresReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemGoleadoresReporteActionPerformed(evt);
+            }
+        });
         popupMenuGoleadores.add(menuItemGoleadoresReporte);
 
         menuItemEquiposReporte.setText("Crear Reporte De La Confederación Seleccionada");
@@ -538,18 +573,16 @@ public class MainWindow extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Equipo 1", "Equipo 2", "Resultado", "Fecha", "Lugar"
+                "Equipo 1", "Equipo 2", "Resultado", "Fecha", "Lugar", "ID Partido"
             }
         ));
+        tablePartidos.setColumnSelectionAllowed(true);
         tablePartidos.setInheritsPopupMenu(true);
         tablePartidos.getTableHeader().setReorderingAllowed(false);
         scrollpanePartidos.setViewportView(tablePartidos);
         tablePartidos.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         if (tablePartidos.getColumnModel().getColumnCount() > 0) {
             tablePartidos.getColumnModel().getColumn(0).setMinWidth(20);
-            tablePartidos.getColumnModel().getColumn(2).setHeaderValue("Resultado");
-            tablePartidos.getColumnModel().getColumn(3).setHeaderValue("Fecha");
-            tablePartidos.getColumnModel().getColumn(4).setHeaderValue("Lugar");
         }
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -670,8 +703,50 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_menuVerBracketActionPerformed
 
     private void menuItemGruposReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGruposReporteActionPerformed
-        // TODO add your handling code here:
+        try {
+            Logic.getInstance().getPDFPrinter().crearReporteGrupos();
+        } catch (SQLException ex) {
+            UI.getInstance().displayError("Error al generar el PDF de grupos:\n"+ex.getMessage(), this);
+        }
     }//GEN-LAST:event_menuItemGruposReporteActionPerformed
+
+    private void menuItemGoleadoresReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGoleadoresReporteActionPerformed
+        try {
+            Logic.getInstance().getPDFPrinter().crearReporteGoleadores();
+        } catch (SQLException ex) {
+            UI.getInstance().displayError("Error al generar el PDF de goleadores:\n"+ex.getMessage(), this);
+        }
+    }//GEN-LAST:event_menuItemGoleadoresReporteActionPerformed
+
+    private void popupMenuPosicionesReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popupMenuPosicionesReporteActionPerformed
+        try {
+            Logic.getInstance().getPDFPrinter().crearReportePosiciones();
+        } catch (SQLException ex) {
+            UI.getInstance().displayError("Error al generar el PDF de posiciones generales:\n"+ex.getMessage(), this);
+        }
+    }//GEN-LAST:event_popupMenuPosicionesReporteActionPerformed
+
+    private void menuItemPartidosReporteTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemPartidosReporteTodosActionPerformed
+        try {
+            Logic.getInstance().getPDFPrinter().crearReportePartidos();
+        } catch (SQLException ex) {
+            UI.getInstance().displayError("Error al generar el PDF de todos los partidos:\n"+ex.getMessage(), this);
+        }
+    }//GEN-LAST:event_menuItemPartidosReporteTodosActionPerformed
+
+    private void menuItemPartidosReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemPartidosReporteActionPerformed
+        try {
+            int selectedRow = tablePartidos.getSelectedRow();
+            if(selectedRow != -1){
+                Partido partido = (Partido)(tablePartidos.getModel().getValueAt(selectedRow, 5));
+                Logic.getInstance().getPDFPrinter().crearReportePartido(partido);
+            }
+            else
+                UI.getInstance().displayError("No ha seleccionado ningún partido.", this);
+        } catch (SQLException ex) {
+            UI.getInstance().displayError("Error al generar el PDF de Posiciones Generales:\n"+ex.getMessage(), this);
+        }
+    }//GEN-LAST:event_menuItemPartidosReporteActionPerformed
 
     /**
      * @param args the command line arguments

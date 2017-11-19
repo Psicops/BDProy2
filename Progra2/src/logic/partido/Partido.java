@@ -107,4 +107,9 @@ public class Partido{
              + Integer.toString(marcadorEquipo2);
         
     }*/
+    
+    @Override
+    public String toString(){
+        return Integer.toString(numeroPartido);
+    }
 }

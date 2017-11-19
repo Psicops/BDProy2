@@ -119,4 +119,9 @@ public class Equipo{
     public int getGolesDiferencia() {
         return golesDiferencia;
     }
+    
+    @Override
+    public String toString(){
+        return nombrePais+" ("+codigoPais+")";
+    }
 }

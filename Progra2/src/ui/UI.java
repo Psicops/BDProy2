@@ -19,6 +19,7 @@ public class UI {
     }
     
     public void displayUI(){
+        mainWindow.update();
         mainWindow.setVisible(true);
     }
     

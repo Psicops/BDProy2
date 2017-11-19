@@ -3,8 +3,6 @@ package ui;
 import java.awt.Frame;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import logic.Equipo;
@@ -12,14 +10,15 @@ import logic.Logic;
 import logic.persona.Asistente;
 import logic.persona.Federativo;
 import logic.persona.Jugador;
-import logic.persona.Persona;
 
 public class VentanaEquipo extends javax.swing.JDialog {
 
-    Equipo equipo;
+    private Equipo equipo;
+    private MainWindow parent;
     
-    public VentanaEquipo(Equipo equipo, Frame parent) {
+    public VentanaEquipo(Equipo equipo, MainWindow parent) {
         super(parent, true);
+        this.parent = parent;
         initComponents();
         grupoComboBox.addItem(Logic.GRUPO_A);
         grupoComboBox.addItem(Logic.GRUPO_B);
@@ -325,7 +324,7 @@ public class VentanaEquipo extends javax.swing.JDialog {
 
     private void federativosTodosListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_federativosTodosListMouseClicked
         if (evt.getClickCount() == 2) {
-            System.out.println("double clicked");
+            moverPersona(federativosTodosList, federativosEquipoList);
         }
     }//GEN-LAST:event_federativosTodosListMouseClicked
 
@@ -334,25 +333,49 @@ public class VentanaEquipo extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelarButtonActionPerformed
 
     private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
-        ArrayList<Asistente> asistentes = new ArrayList(); 
-        ArrayList<Federativo> federativos = new ArrayList(); 
-        ArrayList<Jugador> jugadores = new ArrayList(); 
-        
-        asistentes.add((Asistente)entrenadorComboBox.getSelectedItem());
-        
-        for(int i = 0; i < asistentesEquipoList.getModel().getSize(); i++)
-            asistentes.add((Asistente)asistentesEquipoList.getModel().getElementAt(i));
-        for(int i = 0; i < federativosEquipoList.getModel().getSize(); i++)
-            federativos.add((Federativo)federativosEquipoList.getModel().getElementAt(i));
-        for(int i = 0; i < jugadoresEquipoList.getModel().getSize(); i++)
-            jugadores.add((Jugador)jugadoresEquipoList.getModel().getElementAt(i));
-        
-        Equipo equipoNuevo = new Equipo(codigoTextField.getText(), nombreTextField.getText(),
-                                        (String)grupoComboBox.getSelectedItem(), jugadores,
-                                        asistentes, federativos);
-        
         try {
-            Logic.getInstance().updateTeam(equipo, equipoNuevo);
+            //se guardan todas las personas que no fueron asignadas al equipo como libres.
+            ArrayList<Asistente> asistentesTodos = new ArrayList(); 
+            ArrayList<Federativo> federativosTodos = new ArrayList(); 
+            ArrayList<Jugador> jugadoresTodos = new ArrayList();
+
+            for(int i = 0; i< entrenadorComboBox.getItemCount(); i++){
+                if(!((Asistente)entrenadorComboBox.getItemAt(i)).equals(entrenadorComboBox.getSelectedItem()))
+                    asistentesTodos.add((Asistente)entrenadorComboBox.getItemAt(i));
+            }
+            for(int i = 0; i < asistentesTodosList.getModel().getSize(); i++)
+                asistentesTodos.add((Asistente)asistentesTodosList.getModel().getElementAt(i));
+            for(int i = 0; i < federativosTodosList.getModel().getSize(); i++)
+                federativosTodos.add((Federativo)federativosTodosList.getModel().getElementAt(i));
+            for(int i = 0; i < jugadoresTodosList.getModel().getSize(); i++)
+                jugadoresTodos.add((Jugador)jugadoresTodosList.getModel().getElementAt(i));
+
+            Logic.getInstance().setAsistentesLibres(asistentesTodos);
+            Logic.getInstance().setFederativosLibres(federativosTodos);
+            Logic.getInstance().setJugadoresLibres(jugadoresTodos);
+
+            //se guardan todas las personas y datos del equipo.
+            ArrayList<Asistente> asistentesEquipo = new ArrayList(); 
+            ArrayList<Federativo> federativosEquipo = new ArrayList(); 
+            ArrayList<Jugador> jugadoresEquipo = new ArrayList(); 
+
+            asistentesEquipo.add((Asistente)entrenadorComboBox.getSelectedItem());
+
+            for(int i = 0; i < asistentesEquipoList.getModel().getSize(); i++)
+                asistentesEquipo.add((Asistente)asistentesEquipoList.getModel().getElementAt(i));
+            for(int i = 0; i < federativosEquipoList.getModel().getSize(); i++)
+                federativosEquipo.add((Federativo)federativosEquipoList.getModel().getElementAt(i));
+            for(int i = 0; i < jugadoresEquipoList.getModel().getSize(); i++)
+                jugadoresEquipo.add((Jugador)jugadoresEquipoList.getModel().getElementAt(i));
+
+            Equipo equipoNuevo = new Equipo(codigoTextField.getText(), nombreTextField.getText(),
+                                            (String)grupoComboBox.getSelectedItem(), jugadoresEquipo,
+                                            asistentesEquipo, federativosEquipo);
+            if(equipo != null)
+                Logic.getInstance().updateTeam(equipo, equipoNuevo);
+            else
+                Logic.getInstance().createTeam(equipoNuevo);
+            parent.update();
             UI.getInstance().displayInfo("Equipo agregado exitosamente.", this);
             this.dispose();
         } catch (SQLException ex) {
@@ -361,32 +384,43 @@ public class VentanaEquipo extends javax.swing.JDialog {
     }//GEN-LAST:event_guardarButtonActionPerformed
 
     private void federativosEquipoListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_federativosEquipoListMouseClicked
-        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            moverPersona(federativosEquipoList, federativosTodosList);
+        }
     }//GEN-LAST:event_federativosEquipoListMouseClicked
 
     private void asistentesTodosListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_asistentesTodosListMouseClicked
-        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            moverPersona(asistentesTodosList, asistentesEquipoList);
+        }
     }//GEN-LAST:event_asistentesTodosListMouseClicked
 
     private void asistentesEquipoListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_asistentesEquipoListMouseClicked
-        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            moverPersona(asistentesEquipoList, asistentesTodosList);
+        }
     }//GEN-LAST:event_asistentesEquipoListMouseClicked
 
     private void jugadoresTodosListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jugadoresTodosListMouseClicked
-        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            moverPersona(jugadoresTodosList, jugadoresEquipoList);
+        }
     }//GEN-LAST:event_jugadoresTodosListMouseClicked
 
     private void jugadoresEquipoListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jugadoresEquipoListMouseClicked
-        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            moverPersona(jugadoresEquipoList, jugadoresTodosList);
+        }
     }//GEN-LAST:event_jugadoresEquipoListMouseClicked
     
-    private void moverActor(JList desde, JList hacia){
-        DefaultListModel modelDesde
+    private void moverPersona(JList desde, JList hacia){
         if(desde.getSelectedValue() != null){
-            hacia.add(desde.getSelectedValue());
-            
+            DefaultListModel haciaModel = (DefaultListModel)hacia.getModel();
+            DefaultListModel desdeModel = (DefaultListModel)desde.getModel();
+            haciaModel.addElement(desde.getSelectedValue());
+            desdeModel.removeElement(desde.getSelectedValue());
         }else
-            UI.getInstance().displayError("No ha seleccionado ningún actor en la lista "+todos.getName(), this);
+            UI.getInstance().displayError("No ha seleccionado ninguna persona en la lista "+desde.getName(), this);
     }
     
     /**

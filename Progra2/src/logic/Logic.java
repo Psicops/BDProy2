@@ -3,7 +3,7 @@ package logic;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import javafx.util.Pair;
 import static logic.Equipo.getEquipo;
 import logic.partido.Partido;
 import logic.persona.Arbitro;
@@ -51,6 +51,7 @@ public class Logic {
     }
     
     public ArrayList<Confederacion> getConfederaciones() throws SQLException{
+        System.out.println("ayy lmao");
         ArrayList<Confederacion> confed = new ArrayList();
         ResultSet rs = Conexion.getRS("SELECT * FROM CONFEDERACION");
         while(rs.next()){
@@ -76,11 +77,9 @@ public class Logic {
     //retorna los equipos de un grupo ordenado por puntaje
     public ArrayList<Equipo> getGrupo(String idGrupo) throws SQLException{
         ArrayList<Equipo> grupo = new ArrayList();
-        for(Confederacion confederacion: getConfederaciones()){
-            for(Equipo equipo : confederacion.getEquipos()){
-                if(equipo.getGrupo().equals(idGrupo))
-                    grupo.add(equipo);
-            }
+        ResultSet rs = Conexion.getRS("SELECT * FROM EQUIPO WHERE GRUPO = '" + idGrupo + "'");
+        while(rs.next()){
+            grupo.add(getEquipo(rs.getString("CODIGOPAIS")));
         }
         return grupo;
     }
@@ -100,25 +99,30 @@ public class Logic {
                 EX = true;
             else
                 EX = false;
-//                partidos.add(new Partido(rs.getInt("NUMEROPARTIDO"),rs.getString("NOMBREESTADIO"),EX,
-//                    rs.getInt("CANTIDADAFICIONADOS"),rs.getString("ETAPA"),rs.getString("FECHAHORA"),
-//                        rs.getString("FECHAHORA"),rs.getString("ETAPA"),rs.getString("ETAPA")));
+//            partidos.add(new Partido(rs.getInt("NUMEROPARTIDO"),rs.getString("NOMBREESTADIO"),EX,
+//                rs.getInt("CANTIDADAFICIONADOS"),rs.getString("ETAPA"),rs.getString("FECHAHORA"),
+//                    rs.getString("FECHAHORA"),rs.getString("ETAPA"),rs.getString("ETAPA")));
         }
         return partidos;
     }
     
+    public Partido getPartido(int numeroPartido){
+        return null;
+    }
+    
     //retorna los goleadores en orden de cantidad de goles.
-    public HashMap<Jugador, Integer> getGoleadores() throws SQLException{
-        HashMap<Jugador, Integer> goleadores = new HashMap();
+    public Pair<ArrayList<Jugador>, ArrayList<Integer>> getGoleadores() throws SQLException{
+        ArrayList<Jugador> goleadores = new ArrayList();
+        ArrayList<Integer> goles = new ArrayList();
         ResultSet rs = Conexion.getRS("SELECT NUMEROPASAPORTE, COUNT(TIPOACCION) AS CANTGOLES FROM ACCION"
                 + " WHERE TIPOACCION = 'Gol' GROUP BY NUMEROPASAPORTE");
         while(rs.next()){
             Jugador goleador = getJugador(rs.getString("NUMEROPASAPORTE"));
-            goleadores.put(goleador, rs.getInt("CANTGOLES"));
-//                System.out.println("Jugador: " + rs.getString("NUMEROPASAPORTE"));
-//                System.out.println("Goles: " + rs.getInt("CANTGOLES"));
+            goleadores.add(goleador);
+            goles.add(rs.getInt("CANTGOLES"));
         }
-        return goleadores;
+        Pair<ArrayList<Jugador>, ArrayList<Integer>> goleadoresEntry = new Pair(goleadores, goles);
+        return goleadoresEntry;
     }
 
     public Jugador getJugador(String jugador) throws SQLException{
@@ -164,27 +168,115 @@ public class Logic {
 
     public ArrayList<Asistente> getEntrenadores() throws SQLException{
         ArrayList<Asistente> entrenadores = new ArrayList();
-        ResultSet rs = Conexion.getRS("select nombre, apellido1, apellido2, Jugadores.numeroPasaporte,"
-                        + " fechaNacimiento, posicion, numeroCamisa from Personas join Jugadores"
-                            + " on Jugadores.numeroPasaporte = Personas.numeroPasaporte");
+        ResultSet rs = Conexion.getRS("select nombre, apellido1, apellido2, Asistente.numeroPasaporte,"
+                        + " fechaNacimiento, nacionalidad, tipoasistente, iniciopuesto from Personas join Asistente"
+                            + " on Asistente.numeroPasaporte = Personas.numeroPasaporte where puesto = 'Entrenador'");
         while(rs.next()){
-            entrenadores.add(new Asistente(rs.getString("NOMBRE"),rs.getString("APELLIDO1"), rs.getString("APELLIDO2"), 
-                rs.getString("NUMEROPASAPORTE"), rs.getDate("FECHANACIMIENTO"), rs.getString("POSICION"),
-                    rs.getInt("NUMEROCAMISA")));
+            entrenadores.add(new Asistente(rs.getString("nombre"),rs.getString("apellido1"), rs.getString("apellido2"), 
+                rs.getString("numeroPasaporte"), rs.getDate("fechaNacimiento"), rs.getString("nacionalidad"),
+                    rs.getString("tipoasistente"), rs.getDate("iniciopuesto")));
+        }
+        return entrenadores;
+    }
+    // hacer metodo que recibe arraylist de jugadores/entrenadores/asistentes para colocarlos en un equipo
+    public ArrayList<Asistente> getAsistentesLibres() throws SQLException{
+        ArrayList<Asistente> Asist = new ArrayList();
+        ResultSet rs = Conexion.getRS("select nombre, apellido1, apellido2, Asistente.numeroPasaporte,"
+                        + " fechaNacimiento, nacionalidad, tipoasistente, iniciopuesto from Personas join Asistente"
+                            + " on Asistente.numeroPasaporte = Personas.numeroPasaporte where puesto != 'Entrenador'"
+                                + " and equipo = 'NUL'");
+        while(rs.next()){
+            Asist.add(new Asistente(rs.getString("nombre"),rs.getString("apellido1"), rs.getString("apellido2"), 
+                rs.getString("numeroPasaporte"), rs.getDate("fechaNacimiento"), rs.getString("nacionalidad"),
+                    rs.getString("tipoasistente"), rs.getDate("iniciopuesto")));
+        }
+        return Asist;
+    }
+    
+    public ArrayList<Asistente> getEntrenadoresLibres() throws SQLException{
+        ArrayList<Asistente> entrenadores = new ArrayList();
+        ResultSet rs = Conexion.getRS("select nombre, apellido1, apellido2, Asistente.numeroPasaporte,"
+                        + " fechaNacimiento, nacionalidad, tipoasistente, iniciopuesto from Personas join Asistente"
+                            + " on Asistente.numeroPasaporte = Personas.numeroPasaporte where puesto = 'Entrenador'"
+                                + "and Equipo = 'NUL'");
+        while(rs.next()){
+            entrenadores.add(new Asistente(rs.getString("nombre"),rs.getString("apellido1"), rs.getString("apellido2"), 
+                rs.getString("numeroPasaporte"), rs.getDate("fechaNacimiento"), rs.getString("nacionalidad"),
+                    rs.getString("tipoasistente"), rs.getDate("iniciopuesto")));
         }
         return entrenadores;
     }
     
-    public ArrayList<Asistente> getAsistentes() throws SQLException{
-        return null;
+    public ArrayList<Federativo> getFederativosLibres() throws SQLException{
+        ArrayList<Federativo> fede = new ArrayList();
+        ResultSet rs = Conexion.getRS("select nombre, apellido1, apellido2, Personas.numeroPasaporte,"
+                        + " fechaNacimiento, nacionalidad, puesto, iniciopuesto from Personas join Federativo"
+                            + " on Federativo.numeroPasaporte = Personas.numeroPasaporte where puesto = 'Entrenador'"
+                                + "and Equipo = 'NUL'");
+        while(rs.next()){
+            fede.add(new Federativo(rs.getString("nombre"),rs.getString("apellido1"), rs.getString("apellido2"), 
+                rs.getString("numeroPasaporte"), rs.getDate("fechaNacimiento"), rs.getString("nacionalidad"),
+                    rs.getString("puesto"), rs.getDate("iniciopuesto")));
+        }
+        return fede;
+    }
+    
+    public ArrayList<Jugador> getJugadoresLibres() throws SQLException{
+        ArrayList<Jugador> jugadores = new ArrayList();
+        ResultSet rs = Conexion.getRS("select nombre, apellido1, apellido2, Jugadores.numeroPasaporte,"
+                        + " fechaNacimiento, posicion, numeroCamisa from Personas join Jugadores"
+                            + " on Jugadores.numeroPasaporte = Personas.numeroPasaporte where Equipo = 'NUL'");
+        while(rs.next()){
+            jugadores.add(new Jugador(rs.getString("NOMBRE"),rs.getString("APELLIDO1"), rs.getString("APELLIDO2"), 
+                rs.getString("NUMEROPASAPORTE"), rs.getDate("FECHANACIMIENTO"), rs.getString("POSICION"),
+                    rs.getInt("NUMEROCAMISA")));
+        }
+        return jugadores;
     }
     
     public ArrayList<Federativo> getFederativos() throws SQLException{
-        return null;
+        ArrayList<Federativo> fede = new ArrayList();
+        ResultSet rs = Conexion.getRS("select nombre, apellido1, apellido2, Personas.numeroPasaporte,"
+                        + " fechaNacimiento, nacionalidad, puesto, iniciopuesto from Personas join Federativo"
+                            + " on Federativo.numeroPasaporte = Personas.numeroPasaporte where puesto = 'Entrenador'");
+        while(rs.next()){
+            fede.add(new Federativo(rs.getString("nombre"),rs.getString("apellido1"), rs.getString("apellido2"), 
+                rs.getString("numeroPasaporte"), rs.getDate("fechaNacimiento"), rs.getString("nacionalidad"),
+                    rs.getString("puesto"), rs.getDate("iniciopuesto")));
+        }
+        return fede;
+    }
+    
+    public void setAsistentesLibres(ArrayList<Asistente> asist) throws SQLException{
+        for(int x = 0; x < asist.size(); x++){
+            String numPas = asist.get(x).getNumeroPasaporte();
+            Conexion.setQuery("update asistente set equipo = 'NUL' where numeropasaporte = '" + numPas + "'");
+        }
+    }
+    
+    public void setFederativosLibres(ArrayList<Federativo> fede) throws SQLException{
+        for(int x = 0; x < fede.size(); x++){
+            String numPas = fede.get(x).getNumeroPasaporte();
+            Conexion.setQuery("update federativo set equipo = 'NUL' where numeropasaporte = '" + numPas + "'");
+        }
+    }
+    
+    public void setJugadoresLibres(ArrayList<Jugador> player) throws SQLException{
+        for(int x = 0; x < player.size(); x++){
+            String numPas = player.get(x).getNumeroPasaporte();
+            Conexion.setQuery("update jugadores set equipo = 'NUL' where numeropasaporte = '" + numPas + "'");
+        }
+    }
+    
+    public void createTeam(Equipo team) throws SQLException{
+        
     }
     
     public void updateTeam(Equipo viejo, Equipo nuevo) throws SQLException{
         
+    }
+    
+    public void deleteTeam(Equipo equipo) throws SQLException{
     }
     
     //retorna un string con el diccionario de datos

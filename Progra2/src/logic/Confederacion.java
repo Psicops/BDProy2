@@ -34,4 +34,9 @@ public class Confederacion{
     public void setEquipo(ArrayList<Equipo> equipos){
         this.equipos = equipos;
     }
+    
+    @Override
+    public String toString(){
+        return codigo;
+    } 
 }
