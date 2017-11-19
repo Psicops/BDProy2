@@ -104,17 +104,16 @@ create table PENALES(
     
 alter table PENALES add primary key (jugador, numeroPartido);
 
---insert into CONFEDERACION select * from proy2.conf;
+insert into CONFEDERACION select * from proy2.conf;
 
---insert into EQUIPO select confederacion, pais, grupo, equipo from proy2.group_ join proy2.team on proy2.group_.equipo = proy2.team.codigo;
-
+insert into EQUIPO select confederacion, pais, grupo, equipo from proy2.group_ join proy2.team on proy2.group_.equipo = proy2.team.codigo;
  
 insert into personas values
     ('1300', '02-01-1978', 'Henry', 'Bejarano', 'Matarrita');
-    ('1301', '22-07-1982', 'Hugo', 'Cruz', 'Alvarado'),
-    ('1302', '17-04-1964', 'William', 'Mattus', 'Vega'),
-    ('1303', '06-03-1986', 'Ricardo', 'Montego', 'Garita'),
-    ('1304', '09-05-1970', 'Walter', 'Quesada', 'Cordero');
+    ('1301', '22-07-1982', 'Hugo', 'Cruz', 'Alvarado')
+    ('1302', '17-04-1964', 'William', 'Mattus', 'Vega')
+    ('1303', '06-03-1986', 'Ricardo', 'Montego', 'Garita')
+    ('1304', '09-05-1970', 'Walter', 'Quesada', 'Cordero')
     
 insert into arbitro values
     ('1300', '01-01-2011', 'Costarricense')
@@ -122,18 +121,71 @@ insert into arbitro values
     ('1302', '06-08-2008', 'Costarricense')
     ('1303', '01-10-2011', 'Costarricense')
     ('1304', '01-01-2001', 'Costarricense')
-    
 
-
-
-
-
-
-
-
-
-
-
+insert into Equipo values
+('Concacaf','BRUNEI DARUSSALAM', 'A','BN');
+insert into Equipo values
+('AFC','BRITISH INDIAN OCEAN TERRITORY', 'F','IO');
+insert into Equipo values
+('Conmebol', 'BRAZIL', 'E', 'BR');
+insert into Equipo values
+('CAF', 'BOUVET ISLAND', 'B', 'BV');
+insert into Equipo values
+('Concacaf', 'BOTSWANA', 'G', 'BW');
+insert into Equipo values
+('Concacaf', 'BOSNIA AND HERZEGOVINA', 'H', 'BA');
+insert into Equipo values
+('OFC', 'BOLIVIA', 'C', 'BO');
+insert into Equipo values
+('OFC', 'BHUTAN', 'E', 'BT');
+insert into Equipo values
+('AFC', 'BERMUDA', 'D', 'BM');
+insert into Equipo values
+('Conmebol', 'BENIN', 'A', 'BJ');
+insert into Equipo values
+('UEFA', 'BELIZE', 'E', 'BZ');
+insert into Equipo values
+('Concacaf', 'BELGIUM', 'A', 'BE');
+insert into Equipo values
+('AFC', 'BELARUS', 'B', 'BY');
+insert into Equipo values
+('UEFA', 'BARBADOS', 'A', 'BB');
+insert into Equipo values
+('Concacaf', 'BANGLADESH', 'B', 'BD');
+insert into Equipo values
+('Concacaf', 'BAHRAIN', 'D', 'BH');
+insert into Equipo values
+('OFC', 'BAHAMAS', 'H', 'BS');
+insert into Equipo values
+('UEFA', 'AZERBAIJAN', 'E', 'AZ');
+insert into Equipo values
+('Conmebol', 'AUSTRIA', 'D', 'AT');
+insert into Equipo values
+('UEFA', 'AUSTRALIA', 'G', 'AU');
+insert into Equipo values
+('Conmebol', 'ARUBA', 'B', 'AW');
+insert into Equipo values
+('CAF', 'ARMENIA', 'C', 'AM');
+insert into Equipo values
+('AFC', 'ARGENTINA', 'G', 'AR');
+insert into Equipo values
+('CAF', 'ANTIGUA AND BARBUDA', 'H', 'AG');
+insert into Equipo values
+('UEFA', 'ANTARCTICA', 'C', 'AQ');
+insert into Equipo values
+('CAF', 'ANGUILLA', 'D', 'AI');
+insert into Equipo values
+('Conmebol', 'ANGOLA', 'H', 'AO');
+insert into Equipo values
+('AFC', 'ANDORRA', 'F', 'AD');
+insert into Equipo values
+('OFC', 'AMERICAN SAMOA', 'G', 'AS');
+insert into Equipo values
+('UEFA', 'ALGERIA', 'C', 'DZ');
+insert into Equipo values
+('OFC', 'ALBANIA', 'F', 'AL');
+insert into Equipo values
+('CAF', 'AFGHANISTAN', 'F', 'AF');
 
 
 
