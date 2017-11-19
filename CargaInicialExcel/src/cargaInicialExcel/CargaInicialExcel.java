@@ -2,7 +2,12 @@ package cargaInicialExcel;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.SQLDataException;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -20,18 +25,83 @@ import jxl.write.WriteException;
 public class CargaInicialExcel {
     
     public static final String FORMATO_FECHA = "dd-MM-yyyy";
+    public static final String FORMATO_FECHA_BASE = "dd-MMM-yyyy";
+    public static final String URL = "jdbc:oracle:thin:@localhost:1521:XE";
+    public static final String USERNAME = "dbaproy2";
+    public static final String PASSWORD = "1234";
+    static Connection cn;
+    static Statement st;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
+        //generarExcel("actores.xls");
         try {
             HashMap<Jugador, String> jugadores = getJugadoresExcel("actores.xls");
             HashMap<Asistente, String> asistentes = getAsistentesExcel("actores.xls");
             HashMap<Federativo, String> federativos = getFederativosExcel("actores.xls");
-            
             //carga inicial acá
+            SimpleDateFormat sdf = new SimpleDateFormat(FORMATO_FECHA_BASE);
+            for(Jugador player: jugadores.keySet()){
+                setQuery("insert into personas values ('" + player.getNumeroPasaporte() + "','" 
+                        + sdf.format(player.getFechaNacimiento())+ "','" + player.getNombre() + 
+                        "','" + player.getApellido1() + "','" + player.getApellido2() + "')");
+            }
+            for(Jugador player: jugadores.keySet()){
+                if(!"NUL".equals(jugadores.get(player))){
+                    setQuery("insert into jugadores values ('" + player.getNumeroPasaporte() + "'," + player.getNumeroCamisa() +
+                                ",'" + player.getPuesto() + "','" + jugadores.get(player) +"')");
+                }else{
+                    setQuery("insert into jugadores values ('" + player.getNumeroPasaporte() + "'," + player.getNumeroCamisa() +
+                                ",'" + player.getPuesto() + "', null)");
+                }
+            }
+            for(Asistente asist: asistentes.keySet()){
+                setQuery("insert into personas values ('" + asist.getNumeroPasaporte() + "','" + 
+                        sdf.format(asist.getFechaNacimiento())+ "','" + asist.getNombre()+ 
+                        "','" +asist.getApellido1()+ "','" +asist.getApellido2()+ "')");
+            }
+            for(Asistente asist: asistentes.keySet()){
+                if(!"NUL".equals(asistentes.get(asist))){
+                    setQuery("insert into asistente values ('"+ asist.getNumeroPasaporte()+ "','" +
+                            sdf.format(asist.getInicioPuesto())+"','" + asist.getNacionalidad() + 
+                            "','" + asist.getPuesto()+ "','" +asistentes.get(asist)+ "')");
+                }else{
+                    setQuery("insert into asistente values ('"+ asist.getNumeroPasaporte()+ "','" +
+                            sdf.format(asist.getInicioPuesto())+"','" + asist.getNacionalidad() + 
+                            "','" + asist.getPuesto()+ "', null)");
+                }
+            }
             
-        } catch (IOException | BiffException | ParseException ex) {
+            for(Federativo fede: federativos.keySet()){
+                setQuery("insert into personas values ('" + fede.getNumeroPasaporte() + "','" + 
+                        sdf.format(fede.getFechaNacimiento())+ "','" + fede.getNombre()+ "','" +
+                        fede.getApellido1()+ "','" +fede.getApellido2()+ "')");
+            }
+            for(Federativo fede: federativos.keySet()){
+                if(!"NUL".equals(federativos.get(fede))){
+                setQuery("insert into federativo values ('"+ fede.getNumeroPasaporte()+ "','" +
+                        sdf.format(fede.getInicioPuesto())+ "','" + fede.getNacionalidad() + "','" + 
+                        fede.getPuesto()+ "','" +federativos.get(fede)+ "')");
+                }else{
+                    setQuery("insert into federativo values ('"+ fede.getNumeroPasaporte()+ "','" +
+                        sdf.format(fede.getInicioPuesto())+ "','" + fede.getNacionalidad() + "','" + 
+                        fede.getPuesto()+ "', null)");
+                }
+            }
+            setQuery("commit");
+        } catch (IOException | BiffException | ParseException | SQLDataException ex) {
             Logger.getLogger(CargaInicialExcel.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static Connection getConexion() throws SQLException{
+        cn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        return cn;
+    }
+    
+    public static void setQuery(String query) throws SQLException{
+        cn = getConexion();
+        st = cn.createStatement();
+        st.executeQuery(query);
     }
     
     public static HashMap<Jugador, String> getJugadoresExcel(String ruta) throws IOException, BiffException, ParseException{
@@ -102,11 +172,11 @@ public class CargaInicialExcel {
         return federativos;
     }
     
-    public static void generarExcel(){
+    public static void generarExcel(String path){
         try {
             String[] nombres = {"Keylor", "Johnny", "Giancarlo", "Michael", "Celso", "Oscar", "Christian", "Dave", "Joel", "Bryan", "Waylon", "Esteban", "Randall", "Junior", "Yeltsin", "Patrick", "Roy", "Diego", "Marcos", "Jose", "Daniel", "Tim", "DeAndre", "Omar", "Matt", "John", "DeMarcus", "Clint", "Aron", "Mikkel", "Alejandro", "Brad", "Jermaine", "Kyle", "Julian", "Jozy", "Chris"};
             String[] apellidos = {"Navas", "Acosta", "Gonzales", "Umana", "Borges", "Duarte", "Bolanos", "Myrie", "Campbell", "Ruiz", "Barrantes", "Francis", "Brenes", "Diaz", "Gamboa", "Tejeda", "Pemberton", "Miller", "Calvo", "Urena", "Cubero", "Cambronero", "Howard", "Yeldin", "Gonzales", "Bradley", "Besler", "Brooks", "Beasly", "Dempsey", "Johansson", "Diskerud", "Bedoya", "Guzman"};
-            String[] codigosPaises = {"AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BA", "BW", "BV", "BR", "IO", "BN"};
+            String[] codigosPaises = {"AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BA", "BW", "BV", "BR", "IO", "BN", "NUL"};
             String[] puestosJugadores = {"Portero", "Defensa", "Mediocampista", "Delantero"};
             String[] puestosAsistentes = {"Entrenador", "Técnico", "Técnico", "Preparador Físico", "Médico", "Psicólogo", "Nutricionista", "Administrativo", "Delegado de Equipo"};
             String[] puestosFederativos = {"Director", "Vicepresidente", "Secretario", "Tesorero", "Fiscal", "Vocal"};
@@ -114,7 +184,7 @@ public class CargaInicialExcel {
             int numeroPasaporte = 0;
             Random random = new Random();
             
-            WritableWorkbook book = Workbook.createWorkbook(new File("actores.xls"));
+            WritableWorkbook book = Workbook.createWorkbook(new File(path));
             WritableSheet sheetJugadores = book.createSheet("jugadores", 0);
             WritableSheet sheetAsistentes = book.createSheet("asistentes", 1);
             WritableSheet sheetFederativos = book.createSheet("federativos", 2);
