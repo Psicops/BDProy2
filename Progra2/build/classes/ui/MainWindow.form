@@ -28,6 +28,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Reporte"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="popupMenuPosicionesReporteActionPerformed"/>
+          </Events>
         </MenuItem>
       </SubComponents>
     </Container>
@@ -41,6 +44,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Partido"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemPartidosCrearActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemPartidosBorrar">
           <Properties>
@@ -57,11 +63,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Reporte del Partido Seleccionado"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemPartidosReporteActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemPartidosReporteTodos">
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Reporte de TODOS los Partidos"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemPartidosReporteTodosActionPerformed"/>
+          </Events>
         </MenuItem>
       </SubComponents>
     </Container>
@@ -76,6 +88,9 @@
             <Property name="text" type="java.lang.String" value="Crear Reporte"/>
             <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemGoleadoresReporteActionPerformed"/>
+          </Events>
         </MenuItem>
       </SubComponents>
     </Container>
@@ -91,29 +106,44 @@
             <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposReporteActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemEquiposReporteTodos">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jMenuItem1"/>
-            <Property name="actionCommand" type="java.lang.String" value="Crear Reporte De la Condefederaci&#xf3;n Seleccionada"/>
+            <Property name="text" type="java.lang.String" value="Crear Reporte De Todas las Confederacciones"/>
+            <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposReporteTodosActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemEquiposCrear">
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Equipo"/>
             <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposCrearActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemEquiposModificar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Modificar Equipo Seleccionado"/>
             <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposModificarActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemEquiposBorrar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Borrar Equipo Seleccionado"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposBorrarActionPerformed"/>
+          </Events>
         </MenuItem>
       </SubComponents>
     </Container>
@@ -128,6 +158,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Ver Diccionario de Datos"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDiccionarioDatosActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuVerBracket">
               <Properties>
@@ -236,8 +269,8 @@
               <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="scrollpanePosiciones" max="32767" attributes="0"/>
-                  <Component id="scrollpaneGoleadores" pref="0" max="32767" attributes="0"/>
-                  <Component id="scrollpaneEquipos" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="scrollpaneGoleadores" max="32767" attributes="0"/>
+                  <Component id="scrollpaneEquipos" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -1188,12 +1221,13 @@
         <Component class="javax.swing.JTable" name="tablePartidos">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="5" rowCount="0">
+              <Table columnCount="6" rowCount="0">
                 <Column editable="true" title="Equipo 1" type="java.lang.Object"/>
                 <Column editable="true" title="Equipo 2" type="java.lang.Object"/>
                 <Column editable="true" title="Resultado" type="java.lang.Object"/>
                 <Column editable="true" title="Fecha" type="java.lang.Object"/>
                 <Column editable="true" title="Lugar" type="java.lang.Object"/>
+                <Column editable="true" title="ID Partido" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -1209,22 +1243,28 @@
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title value="Resultado"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title value="Fecha"/>
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                  <Title value="Lugar"/>
+                  <Title/>
+                  <Editor/>
+                  <Renderer/>
+                </Column>
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                  <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
               </TableColumnModel>
             </Property>
+            <Property name="columnSelectionAllowed" type="boolean" value="true"/>
             <Property name="inheritsPopupMenu" type="boolean" value="true"/>
             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
               <TableHeader reorderingAllowed="false" resizingAllowed="true"/>

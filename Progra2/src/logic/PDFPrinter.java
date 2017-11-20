@@ -21,7 +21,7 @@ public class PDFPrinter{
     
     public PDFPrinter(){}
     
-    public void crearReporteConfederaciones() throws DocumentException, FileNotFoundException, SQLException{
+    public void crearReporteConfederaciones() throws DocumentException, FileNotFoundException, SQLException, Exception{
         ArrayList<Confederacion> confederaciones = Logic.getInstance().getConfederaciones();
         Document doc = new Document();
         PdfWriter.getInstance(doc, new FileOutputStream("Reporte Confederaciones.pdf"));

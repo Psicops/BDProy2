@@ -1,8 +1,9 @@
 package logic.partido;
 
 import java.sql.Date;
-import java.sql.Time;
+import java.util.ArrayList;
 import logic.Equipo;
+import logic.persona.Arbitro;
 
 public class Partido{
     public static final String FASE_GRUPOS = "Fase de Grupos";
@@ -14,38 +15,49 @@ public class Partido{
     public static final String EXTRA_SI = "SI";
     public static final String EXTRA_NO = "NO";
 
-    private final int numeroPartido;
-    private final Sede sede;
-    private final boolean extras;
-    private final int cantidadAficionados;
-    private final String etapa;
-    private final Date fecha;
-    private final Time hora;
-    private final Time reposicion1Tiempo;
-    private final Time reposicion2Tiempo;
-    private final Equipo Equipo1;
-    private final Equipo Equipo2;
+    private int numeroPartido;
+    private Sede sede;
+    private boolean extras;
+    private int cantidadAficionados;
+    private String etapa;
+    private Date fecha_hora;
+    private String reposicion1Tiempo;
+    private String reposicion2Tiempo;
+    private Alineacion alineacion1;
+    private Alineacion alineacion2;
+    private ArrayList<Accion> acciones;
+    private ArrayList<Arbitro> arbitros;
+    private ArrayList<Penal> penales;
     
     public Partido(int numeroPartido, Sede sede, boolean extras, int cantidadAficionados,
-            String etapa, Date fecha, Time hora, Time reposicion1Tiempo, Time reposicion2Tiempo,
-             Equipo Equipo1, Equipo Equipo2){
+            String etapa, Date fecha, String reposicion1Tiempo, String reposicion2Tiempo){
         this.numeroPartido = numeroPartido;
         this.sede = sede;
         this.extras = extras;
         this.cantidadAficionados = cantidadAficionados;
         this.etapa = etapa;
-        this.fecha = fecha;
-        this.hora = hora;
+        this.fecha_hora = fecha;
         this.reposicion1Tiempo = reposicion1Tiempo;
         this.reposicion2Tiempo = reposicion2Tiempo;
-        this.Equipo1 = Equipo1;
-        this.Equipo2 = Equipo2;
+        this.alineacion1 = null;
+        this.alineacion2 = null;
+        this.acciones = null;
+        this.arbitros = null;
+        this.penales = null;
     }
 
     public int getNumeroPartido() {
         return numeroPartido;
     }
 
+    public String getExtras(){
+        String extra;
+        if(extras)
+            extra = EXTRA_SI;
+        else
+            extra =EXTRA_NO;
+        return extra;
+    }
     public Sede getSede() {
         return sede;
     }
@@ -63,50 +75,75 @@ public class Partido{
     }
 
     public Date getFecha() {
-        return fecha;
+        return fecha_hora;
     }
 
-    public Time getHora() {
-        return hora;
-    }
-
-    public Time getReposicion1Tiempo() {
+    public String getReposicion1Tiempo() {
         return reposicion1Tiempo;
     }
 
-    public Time getReposicion2Tiempo() {
+    public String getReposicion2Tiempo() {
         return reposicion2Tiempo;
     }
 
-    public Equipo getEquipo1() {
-        return Equipo1;
+    public void setAlineacion1(Alineacion alineacion1) {
+        this.alineacion1 = alineacion1;
     }
-
-    public Equipo getEquipo2() {
-        return Equipo2;
-    }
-
-
     
+    public Alineacion getAlineacion1() {
+        return alineacion1;
+    }
+
+    public void setAlineacion2(Alineacion alineacion2) {
+        this.alineacion2 = alineacion2;
+    }
+    
+    public Alineacion getAlineacion2() {
+        return alineacion2;
+    }
+    
+    public ArrayList<Arbitro> getArbitros(){
+        return arbitros;
+    }
+    
+    public void setArbitros(ArrayList<Arbitro> arbitros){
+        this.arbitros = arbitros;
+    }
+    
+    public ArrayList<Accion> getAcciones() {
+        return acciones;
+    }
+    
+    public void setAcciones(ArrayList<Accion> acciones){
+        this.acciones = acciones;
+    }
+    
+    public ArrayList<Penal> getPenales() {
+        return penales;
+    }
+    
+    public void setPenales(ArrayList<Penal> penales){
+        this.penales = penales;
+    }
     
     public int getMarcador(Equipo equipo){
         int marcador = 0;
-        /*for(Accion accion : acciones){
+        for(Accion accion : acciones){
             if(accion.getTipoAccion().equals(Accion.GOL) &&
                accion.getEquipo() == equipo){
                     marcador++;
             }    
-        }*/
+        }
         return marcador;
     }
-    /*
+    
     public String getMarcadores(){
-        int marcadorEquipo1 = getMarcador(alineacionEquipo1.getEquipo());
-        int marcadorEquipo2 = getMarcador(alineacionEquipo2.getEquipo());
+        int marcadorEquipo1 = getMarcador(alineacion1.getEquipo());
+        int marcadorEquipo2 = getMarcador(alineacion2.getEquipo());
         return Integer.toString(marcadorEquipo1) + " - " 
              + Integer.toString(marcadorEquipo2);
         
-    }*/
+    }
     
     @Override
     public String toString(){

@@ -4,6 +4,8 @@ import java.awt.Component;
 import javax.swing.JOptionPane;
 
 public class UI {
+    public static final String POPUP_MENU_MESSAGE = "Presione el botón de mouse derecho para más opciones.";
+    
     private static UI instance;
     
     private final MainWindow mainWindow;

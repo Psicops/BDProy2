@@ -22,4 +22,9 @@ public class Sede{
     public String getNombreSede() {
         return nombreSede;
     }
+    
+    @Override
+    public String toString(){
+        return nombreEstadio + " - " + nombreSede + " (" + capacidad +")";
+    }
 }

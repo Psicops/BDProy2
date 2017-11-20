@@ -44,6 +44,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Partido"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemPartidosCrearActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemPartidosBorrar">
           <Properties>
@@ -103,29 +106,44 @@
             <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposReporteActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemEquiposReporteTodos">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jMenuItem1"/>
-            <Property name="actionCommand" type="java.lang.String" value="Crear Reporte De la Condefederaci&#xf3;n Seleccionada"/>
+            <Property name="text" type="java.lang.String" value="Crear Reporte De Todas las Confederacciones"/>
+            <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposReporteTodosActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemEquiposCrear">
           <Properties>
             <Property name="text" type="java.lang.String" value="Crear Equipo"/>
             <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposCrearActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemEquiposModificar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Modificar Equipo Seleccionado"/>
             <Property name="actionCommand" type="java.lang.String" value=""/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposModificarActionPerformed"/>
+          </Events>
         </MenuItem>
         <MenuItem class="javax.swing.JMenuItem" name="menuItemEquiposBorrar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Borrar Equipo Seleccionado"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemEquiposBorrarActionPerformed"/>
+          </Events>
         </MenuItem>
       </SubComponents>
     </Container>
@@ -140,6 +158,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Ver Diccionario de Datos"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDiccionarioDatosActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuVerBracket">
               <Properties>
@@ -248,8 +269,8 @@
               <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="scrollpanePosiciones" max="32767" attributes="0"/>
-                  <Component id="scrollpaneGoleadores" pref="0" max="32767" attributes="0"/>
-                  <Component id="scrollpaneEquipos" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="scrollpaneGoleadores" max="32767" attributes="0"/>
+                  <Component id="scrollpaneEquipos" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>

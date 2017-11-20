@@ -1,8 +1,12 @@
 package ui;
 
+import com.itextpdf.text.DocumentException;
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.util.Pair;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -44,16 +48,16 @@ public class MainWindow extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel)tablePartidos.getModel();
         Object[] fila = new String[5];
         for(Partido partido : Logic.getInstance().getPartidos()){
-            fila[0] = partido.getEquipo1().getCodigoPais();
-            fila[1] = partido.getEquipo2().getCodigoPais();
-            //fila[2] = partido.getMarcadores();
+            fila[0] = partido.getAlineacion1().getEquipo().getCodigoPais();
+            fila[1] = partido.getAlineacion2().getEquipo().getCodigoPais();
+            fila[2] = partido.getMarcadores();
             fila[3] = partido.getFecha();
             fila[4] = partido.getSede().getNombreEstadio();
             model.addRow(fila);
         }
     }
     
-    private void updateTablaGrupo(String idGrupo, JTable tabla) throws SQLException{
+    private void updateTablaGrupo(String idGrupo, JTable tabla) throws SQLException, Exception{
         clearTable(tabla);
         DefaultTableModel model = (DefaultTableModel)tabla.getModel();
         Object[] fila = new Object[10];
@@ -74,7 +78,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
     
-    public void updateTablasGrupos() throws SQLException{
+    public void updateTablasGrupos() throws SQLException, Exception{
         HashMap<String, JTable> tablas = new HashMap();
         tablas.put(Logic.GRUPO_A, tableGrupoA);
         tablas.put(Logic.GRUPO_B, tableGrupoB);
@@ -86,7 +90,7 @@ public class MainWindow extends javax.swing.JFrame {
         tablas.put(Logic.GRUPO_H, tableGrupoH);
         
         for(String grupo : tablas.keySet()){
-           updateTablaGrupo(grupo, tablas.get(grupo)); 
+            updateTablaGrupo(grupo, tablas.get(grupo)); 
         }
     }
     
@@ -125,14 +129,14 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }
     
-    public void updateEquipos() throws SQLException{
+    public void updateEquipos() throws SQLException, Exception{
         clearTable(tableEquipos);
-        DefaultTableModel model = (DefaultTableModel)tablePosiciones.getModel();
-        Object[] fila = new String[2];
+        DefaultTableModel model = (DefaultTableModel)tableEquipos.getModel();
+        Object[] fila = new Object[2];
         for(Confederacion confederacion : Logic.getInstance().getConfederaciones()){
             for(Equipo equipo : confederacion.getEquipos()){
-                fila[0] = equipo.getNombrePais();
-                fila[1] = confederacion.getNombre();
+                fila[0] = equipo;
+                fila[1] = confederacion;
                 model.addRow(fila);
             }
         }
@@ -144,8 +148,8 @@ public class MainWindow extends javax.swing.JFrame {
             updateTablasGrupos();
             //updatePosiciones();
             //updateGoleadores();
-            //updateEquipos();
-        } catch (SQLException ex) {
+            updateEquipos();
+        } catch (Exception ex) {
             UI.getInstance().displayError("Al cargar información de la base de datos:\n"+ex.getMessage(), this);
         }
     }
@@ -230,6 +234,11 @@ public class MainWindow extends javax.swing.JFrame {
         popupMenuPosiciones.add(popupMenuPosicionesReporte);
 
         menuItemPartidosCrear.setText("Crear Partido");
+        menuItemPartidosCrear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemPartidosCrearActionPerformed(evt);
+            }
+        });
         popupMenuPartidos.add(menuItemPartidosCrear);
 
         menuItemPartidosBorrar.setText("Borrar Partido Seleccionado");
@@ -267,21 +276,46 @@ public class MainWindow extends javax.swing.JFrame {
         menuItemEquiposReporte.setText("Crear Reporte De La Confederación Seleccionada");
         menuItemEquiposReporte.setToolTipText("");
         menuItemEquiposReporte.setActionCommand("");
+        menuItemEquiposReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemEquiposReporteActionPerformed(evt);
+            }
+        });
         popupMenuEquipos.add(menuItemEquiposReporte);
 
-        menuItemEquiposReporteTodos.setText("jMenuItem1");
-        menuItemEquiposReporteTodos.setActionCommand("Crear Reporte De la Condefederación Seleccionada");
+        menuItemEquiposReporteTodos.setText("Crear Reporte De Todas las Confederacciones");
+        menuItemEquiposReporteTodos.setActionCommand("");
+        menuItemEquiposReporteTodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemEquiposReporteTodosActionPerformed(evt);
+            }
+        });
         popupMenuEquipos.add(menuItemEquiposReporteTodos);
 
         menuItemEquiposCrear.setText("Crear Equipo");
         menuItemEquiposCrear.setActionCommand("");
+        menuItemEquiposCrear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemEquiposCrearActionPerformed(evt);
+            }
+        });
         popupMenuEquipos.add(menuItemEquiposCrear);
 
         menuItemEquiposModificar.setText("Modificar Equipo Seleccionado");
         menuItemEquiposModificar.setActionCommand("");
+        menuItemEquiposModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemEquiposModificarActionPerformed(evt);
+            }
+        });
         popupMenuEquipos.add(menuItemEquiposModificar);
 
         menuItemEquiposBorrar.setText("Borrar Equipo Seleccionado");
+        menuItemEquiposBorrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemEquiposBorrarActionPerformed(evt);
+            }
+        });
         popupMenuEquipos.add(menuItemEquiposBorrar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -612,6 +646,11 @@ public class MainWindow extends javax.swing.JFrame {
         menuOpciones.setText("Opciones");
 
         menuDiccionarioDatos.setText("Ver Diccionario de Datos");
+        menuDiccionarioDatos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDiccionarioDatosActionPerformed(evt);
+            }
+        });
         menuOpciones.add(menuDiccionarioDatos);
 
         menuVerBracket.setText("Ver Bracket de Eliminación");
@@ -686,8 +725,8 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGap(8, 8, 8)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scrollpanePosiciones)
-                    .addComponent(scrollpaneGoleadores, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(scrollpaneEquipos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(scrollpaneGoleadores)
+                    .addComponent(scrollpaneEquipos))
                 .addContainerGap())
         );
 
@@ -747,6 +786,75 @@ public class MainWindow extends javax.swing.JFrame {
             UI.getInstance().displayError("Error al generar el PDF de Posiciones Generales:\n"+ex.getMessage(), this);
         }
     }//GEN-LAST:event_menuItemPartidosReporteActionPerformed
+
+    private void menuItemEquiposReporteTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEquiposReporteTodosActionPerformed
+        try {
+            Logic.getInstance().getPDFPrinter().crearReporteConfederaciones();
+            UI.getInstance().displayInfo("PDF generado exitosamente.", this);
+        } catch (SQLException ex) {
+            UI.getInstance().displayError("Error SQL al generar el PDF de las Confederaciones:\n"+ex.getMessage(), this);
+        } catch (FileNotFoundException | DocumentException ex) {
+            UI.getInstance().displayError("Error durante la creación del archivo PDF de las Confederaciones:\n"+ex.getMessage(), this);
+        } catch (Exception ex){
+            UI.getInstance().displayError("Error al intentar conseguir la informacion de equipos de la base de datos:\n"+ex.getMessage(), this);
+        }
+    }//GEN-LAST:event_menuItemEquiposReporteTodosActionPerformed
+
+    private void menuItemEquiposCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEquiposCrearActionPerformed
+            new VentanaEquipo(null, this).setVisible(true);
+    }//GEN-LAST:event_menuItemEquiposCrearActionPerformed
+
+    private void menuItemEquiposModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEquiposModificarActionPerformed
+        int selectedRow = tableEquipos.getSelectedRow();
+        if(selectedRow != -1){
+            Equipo equipo = (Equipo)(tableEquipos.getModel().getValueAt(selectedRow, 0));
+            new VentanaEquipo(equipo, this).setVisible(true);
+        }else
+            UI.getInstance().displayError("Debe seleccionar un equipo para modificar.", this);
+    }//GEN-LAST:event_menuItemEquiposModificarActionPerformed
+
+    private void menuItemEquiposBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEquiposBorrarActionPerformed
+        int selectedRow = tableEquipos.getSelectedRow();
+        if(selectedRow != -1){
+            try {
+                Equipo equipo = (Equipo)(tableEquipos.getModel().getValueAt(selectedRow, 0));
+                Logic.getInstance().borrarEquipo(equipo);
+                UI.getInstance().displayInfo("Equipo eliminado satisfactoriamente.", this);
+                this.update();
+            } catch (SQLException ex) {
+                UI.getInstance().displayError("Error al borrar equipo:\n"+ex.getMessage(), this);
+            }
+        }else
+            UI.getInstance().displayError("Debe seleccionar un equipo para borrar.", this);
+    }//GEN-LAST:event_menuItemEquiposBorrarActionPerformed
+
+    private void menuItemEquiposReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEquiposReporteActionPerformed
+        int selectedRow = tableEquipos.getSelectedRow();
+        if(selectedRow != -1){
+            Confederacion confederacion = (Confederacion)(tableEquipos.getModel().getValueAt(selectedRow, 1));
+            try {
+                Logic.getInstance().getPDFPrinter().crearReporteConfederacion(confederacion);
+                UI.getInstance().displayInfo("PDF generado exitosamente.", this);
+            } catch (SQLException ex) {
+                UI.getInstance().displayError("Error de SQL al generar PDF de "+confederacion.getCodigo()+":\n"+ex.getMessage(), this);
+            } catch (FileNotFoundException | DocumentException ex) {
+                UI.getInstance().displayError("Error al generar PDF de "+confederacion.getCodigo()+":\n"+ex.getMessage(), this);
+            }
+        }else
+            UI.getInstance().displayError("Debe seleccionar una confederación para generar un reporte.", this);
+    }//GEN-LAST:event_menuItemEquiposReporteActionPerformed
+
+    private void menuDiccionarioDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDiccionarioDatosActionPerformed
+        try {
+            new VentanaDiccionarioDatos(this).setVisible(true);
+        } catch (SQLException ex) {
+            UI.getInstance().displayError("Error al intentar conseguir eel diccionario de datos:\n"+ex.getMessage(), this);
+        }
+    }//GEN-LAST:event_menuDiccionarioDatosActionPerformed
+
+    private void menuItemPartidosCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemPartidosCrearActionPerformed
+        new VentanaPartido(null, this).setVisible(true);
+    }//GEN-LAST:event_menuItemPartidosCrearActionPerformed
 
     /**
      * @param args the command line arguments

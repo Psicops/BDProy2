@@ -28,6 +28,18 @@ public class VentanaEquipo extends javax.swing.JDialog {
         grupoComboBox.addItem(Logic.GRUPO_F);
         grupoComboBox.addItem(Logic.GRUPO_G);
         grupoComboBox.addItem(Logic.GRUPO_H);
+        asistentesEquipoList.setModel(new DefaultListModel());
+        asistentesTodosList.setModel(new DefaultListModel());
+        federativosEquipoList.setModel(new DefaultListModel());
+        federativosTodosList.setModel(new DefaultListModel());
+        jugadoresEquipoList.setModel(new DefaultListModel());
+        jugadoresTodosList.setModel(new DefaultListModel());
+        asistentesEquipoList.setName("Asistentes del Equipo");
+        asistentesTodosList.setName("Asistentes Libres");
+        federativosEquipoList.setName("Federativos del Equipo");
+        federativosTodosList.setName("Federativos Libres");
+        jugadoresEquipoList.setName("Jugadores del Equipo");
+        jugadoresTodosList.setName("Jugadores Libres");
         if(equipo != null){
             this.equipo = equipo;
             this.setTitle("Edición de Equipo");
@@ -41,7 +53,9 @@ public class VentanaEquipo extends javax.swing.JDialog {
     
     private void llenarCamposCreacion(){
         try {
-            for(Asistente entrenador : Logic.getInstance().getEntrenadores()){
+            for(String codigo : Logic.getInstance().getConfederacionesCodigos())
+                confederacionComboBox.addItem(codigo);
+            for(Asistente entrenador : Logic.getInstance().getEntrenadoresLibres()){
                 entrenadorComboBox.addItem(entrenador);
             }
             DefaultListModel arbitrosTodosModel = new DefaultListModel();
@@ -69,10 +83,13 @@ public class VentanaEquipo extends javax.swing.JDialog {
             this.codigoTextField.setText(equipo.getCodigoPais());
             this.grupoComboBox.setSelectedItem(equipo.getGrupo());
             
-            for(Asistente entrenador : Logic.getInstance().getEntrenadoresLibres()){
-                entrenadorComboBox.addItem(entrenador);
-            }
+            for(String codigo : Logic.getInstance().getConfederacionesCodigos())
+                confederacionComboBox.addItem(codigo);
+            confederacionComboBox.setSelectedItem(Logic.getInstance().getConfederacionCodigo(equipo));
             
+            for(Asistente entrenador : Logic.getInstance().getEntrenadoresLibres())
+                entrenadorComboBox.addItem(entrenador);
+            entrenadorComboBox.addItem(equipo.getEntrenador());
             entrenadorComboBox.setSelectedItem(equipo.getEntrenador());
             
             DefaultListModel asistentesTodosModel = new DefaultListModel();
@@ -103,7 +120,7 @@ public class VentanaEquipo extends javax.swing.JDialog {
             DefaultListModel jugadoresEquipoModel = new DefaultListModel();
             for(Jugador jugador : equipo.getJugadores())
                 jugadoresEquipoModel.addElement(jugador);
-            jugadoresTodosList.setModel(jugadoresEquipoModel);
+            jugadoresEquipoList.setModel(jugadoresEquipoModel);
         } catch (Exception ex) {
             UI.getInstance().displayError("Error al cargar los campos de edición:\n"+ex.getMessage(), this);
         }
@@ -143,6 +160,8 @@ public class VentanaEquipo extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        confederacionComboBox = new javax.swing.JComboBox();
+        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -224,6 +243,8 @@ public class VentanaEquipo extends javax.swing.JDialog {
 
         jLabel8.setText("Grupo");
 
+        jLabel9.setText("Confederación");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -231,14 +252,6 @@ public class VentanaEquipo extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(nombreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addGap(277, 277, 277)
-                        .addComponent(grupoComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -246,32 +259,43 @@ public class VentanaEquipo extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(guardarButton))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(federativosTodosScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(federativosEquipoScrollPane))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel2)
-                            .addGap(273, 273, 273)
-                            .addComponent(codigoTextField))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(federativosTodosScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(federativosEquipoScrollPane))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(277, 277, 277)
+                                .addComponent(grupoComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(273, 273, 273)
+                                .addComponent(codigoTextField))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(269, 269, 269)
+                                .addComponent(nombreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel3)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(asistentesTodosScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(asistentesEquipoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jugadoresTodosScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jugadoresEquipoSrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel4)
-                                    .addGap(252, 252, 252)
-                                    .addComponent(entrenadorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jLabel5)
-                                .addComponent(jLabel6)
-                                .addComponent(jLabel3)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(asistentesTodosScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(asistentesEquipoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jugadoresTodosScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jugadoresEquipoSrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGap(0, 0, Short.MAX_VALUE))))
+                                    .addComponent(jLabel9))
+                                .addGap(236, 236, 236)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(confederacionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(entrenadorComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -289,6 +313,10 @@ public class VentanaEquipo extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(grupoComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(confederacionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -316,7 +344,7 @@ public class VentanaEquipo extends javax.swing.JDialog {
                     .addComponent(guardarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cancelarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -334,26 +362,31 @@ public class VentanaEquipo extends javax.swing.JDialog {
 
     private void guardarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarButtonActionPerformed
         try {
+            if(nombreTextField.getText().equals("") || codigoTextField.getText().equals(""))
+                throw new SQLException("El equipo debe tener nombre y un código.");
             //se guardan todas las personas que no fueron asignadas al equipo como libres.
             ArrayList<Asistente> asistentesTodos = new ArrayList(); 
             ArrayList<Federativo> federativosTodos = new ArrayList(); 
             ArrayList<Jugador> jugadoresTodos = new ArrayList();
 
             for(int i = 0; i< entrenadorComboBox.getItemCount(); i++){
-                if(!((Asistente)entrenadorComboBox.getItemAt(i)).equals(entrenadorComboBox.getSelectedItem()))
+                if(!((Asistente)entrenadorComboBox.getItemAt(i)).equals(entrenadorComboBox.getSelectedItem())){
                     asistentesTodos.add((Asistente)entrenadorComboBox.getItemAt(i));
+                }
             }
-            for(int i = 0; i < asistentesTodosList.getModel().getSize(); i++)
+            for(int i = 0; i < asistentesTodosList.getModel().getSize(); i++){
                 asistentesTodos.add((Asistente)asistentesTodosList.getModel().getElementAt(i));
-            for(int i = 0; i < federativosTodosList.getModel().getSize(); i++)
+            }
+            for(int i = 0; i < federativosTodosList.getModel().getSize(); i++){
                 federativosTodos.add((Federativo)federativosTodosList.getModel().getElementAt(i));
-            for(int i = 0; i < jugadoresTodosList.getModel().getSize(); i++)
+            }
+            for(int i = 0; i < jugadoresTodosList.getModel().getSize(); i++){
                 jugadoresTodos.add((Jugador)jugadoresTodosList.getModel().getElementAt(i));
-
+            }
             Logic.getInstance().setAsistentesLibres(asistentesTodos);
             Logic.getInstance().setFederativosLibres(federativosTodos);
             Logic.getInstance().setJugadoresLibres(jugadoresTodos);
-
+            
             //se guardan todas las personas y datos del equipo.
             ArrayList<Asistente> asistentesEquipo = new ArrayList(); 
             ArrayList<Federativo> federativosEquipo = new ArrayList(); 
@@ -372,9 +405,10 @@ public class VentanaEquipo extends javax.swing.JDialog {
                                             (String)grupoComboBox.getSelectedItem(), jugadoresEquipo,
                                             asistentesEquipo, federativosEquipo);
             if(equipo != null)
-                Logic.getInstance().updateTeam(equipo, equipoNuevo);
-            else
-                Logic.getInstance().createTeam(equipoNuevo);
+                Logic.getInstance().actualizarEquipo(equipo, equipoNuevo, (String)confederacionComboBox.getSelectedItem());
+            else{
+                Logic.getInstance().crearEquipo(equipoNuevo, (String)confederacionComboBox.getSelectedItem());
+            }
             parent.update();
             UI.getInstance().displayInfo("Equipo agregado exitosamente.", this);
             this.dispose();
@@ -415,12 +449,12 @@ public class VentanaEquipo extends javax.swing.JDialog {
     
     private void moverPersona(JList desde, JList hacia){
         if(desde.getSelectedValue() != null){
-            DefaultListModel haciaModel = (DefaultListModel)hacia.getModel();
-            DefaultListModel desdeModel = (DefaultListModel)desde.getModel();
+            DefaultListModel haciaModel = (DefaultListModel)(hacia.getModel());
+            DefaultListModel desdeModel = (DefaultListModel)(desde.getModel());
             haciaModel.addElement(desde.getSelectedValue());
             desdeModel.removeElement(desde.getSelectedValue());
         }else
-            UI.getInstance().displayError("No ha seleccionado ninguna persona en la lista "+desde.getName(), this);
+            UI.getInstance().displayError("No ha seleccionado ninguna persona en la lista de "+desde.getName(), this);
     }
     
     /**
@@ -473,6 +507,7 @@ public class VentanaEquipo extends javax.swing.JDialog {
     private javax.swing.JScrollPane asistentesTodosScrollPane;
     private javax.swing.JButton cancelarButton;
     private javax.swing.JTextField codigoTextField;
+    private javax.swing.JComboBox confederacionComboBox;
     private javax.swing.JComboBox entrenadorComboBox;
     private javax.swing.JList federativosEquipoList;
     private javax.swing.JScrollPane federativosEquipoScrollPane;
@@ -488,6 +523,7 @@ public class VentanaEquipo extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JList jugadoresEquipoList;
     private javax.swing.JScrollPane jugadoresEquipoSrollPane;
     private javax.swing.JList jugadoresTodosList;

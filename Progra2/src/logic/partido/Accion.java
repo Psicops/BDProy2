@@ -1,7 +1,6 @@
 package logic.partido;
 
 import logic.persona.Jugador;
-import java.sql.Time;
 import logic.Equipo;
 
 public class Accion{
@@ -11,10 +10,10 @@ public class Accion{
     
     private final Equipo equipo;
     private final String tipoAccion;
-    private final Time tiempo;
+    private final String tiempo;
     private final Jugador jugador;
 
-    public Accion(Equipo equipo, String tipoAccion, Time tiempo, Jugador jugador) {
+    public Accion(Equipo equipo, String tipoAccion, String tiempo, Jugador jugador) {
         this.equipo = equipo;
         this.tipoAccion = tipoAccion;
         this.tiempo = tiempo;
@@ -29,11 +28,17 @@ public class Accion{
         return tipoAccion;
     }
 
-    public Time getTiempo() {
+    public String getTiempo() {
         return tiempo;
     }
 
     public Jugador getJugador() {
         return jugador;
+    }
+    
+    @Override
+    public String toString(){
+        return tipoAccion + ": " + jugador.getNombre() + " " +
+               jugador.getApellido1() + " ("+tiempo+")";
     }
 }

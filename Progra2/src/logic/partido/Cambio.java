@@ -1,16 +1,15 @@
 package logic.partido;
 
 import logic.persona.Jugador;
-import java.sql.Time;
 import logic.Equipo;
 
 public class Cambio{
     private final Equipo equipo;
     private final Jugador entrante;
     private final Jugador saliente;
-    private final Time tiempo;
+    private final String tiempo;
 
-    public Cambio(Equipo equipo, Jugador entrante, Jugador saliente, Time tiempo) {
+    public Cambio(Equipo equipo, Jugador entrante, Jugador saliente, String tiempo) {
         this.equipo = equipo;
         this.entrante = entrante;
         this.saliente = saliente;
@@ -29,7 +28,13 @@ public class Cambio{
         return saliente;
     }
 
-    public Time getTiempo() {
+    public String getTiempo() {
         return tiempo;
+    }
+    
+    @Override
+    public String toString(){
+        return saliente.getApellido1() + " -> " 
+               + entrante.getApellido1() + " (" +tiempo+")";
     }
 }

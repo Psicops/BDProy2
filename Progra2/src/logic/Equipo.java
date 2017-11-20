@@ -1,7 +1,5 @@
 package logic;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import logic.persona.Asistente;
 import logic.persona.Jugador;
 import java.util.ArrayList;
@@ -11,6 +9,7 @@ public class Equipo{
     private final String codigoPais;
     private final String nombrePais;
     private final String Grupo;
+    private Asistente entrenador;
     private final ArrayList<Jugador> jugadores;
     private final ArrayList<Asistente> asistentes;
     private final ArrayList<Federativo> federativos;
@@ -29,6 +28,7 @@ public class Equipo{
         this.codigoPais = codigoPais;
         this.nombrePais = nombrePais;
         this.Grupo = Grupo;
+        this.entrenador = null;
         this.jugadores = jugadores;
         this.asistentes = asistentes;
         this.federativos = federativos;
@@ -40,19 +40,6 @@ public class Equipo{
         this.golesFavor = 0;
         this.golesContra = 0;
         this.golesDiferencia = 0;
-    }
-    
-    public static Equipo getEquipo(String codigo) throws SQLException{
-        Equipo team = null;
-        ArrayList<Jugador> jugadores = new ArrayList();
-        ArrayList<Asistente> tecnicos = new ArrayList();
-        ArrayList<Federativo> federativos = new ArrayList();
-        ResultSet rs = Conexion.getRS("select * from equipo where codigopais = '" + codigo + "'");
-        while(rs.next()){
-            team = new Equipo(rs.getString("CODIGOPAIS"),rs.getString("NOMBREPAIS"),rs.getString("GRUPO"),
-                jugadores, tecnicos, federativos);
-        }
-        return team;
     }
     
     public String getCodigoPais() {
@@ -67,13 +54,16 @@ public class Equipo{
         return Grupo;
     }
     
-    public Asistente getEntrenador() throws Exception{
-        for(Asistente asistente : asistentes){
-            if(asistente.getPuesto().equals(Asistente.ENTRENADOR))
-                return asistente;
-        }
-        
-        throw new Exception("El equipo seleccionado no tiene entrenadores.");
+    public void setEntrenador(Asistente entrenador) throws Exception{
+        if(entrenador.getPuesto().equals(Asistente.ENTRENADOR))
+            this.entrenador = entrenador;
+        else
+            throw new Exception("El entrenador designado para el equipo "+
+                                codigoPais+" es un "+entrenador.getPuesto()+".");
+    }
+    
+    public Asistente getEntrenador(){
+        return entrenador;
     }
 
     public ArrayList<Jugador> getJugadores() {
